@@ -145,6 +145,46 @@ I have made the following investments and received returns on different dates:
 """
 ```
 
+### 4. Agent Execution Process
+When prompted, the AI agent retrieves relevant tools and executes them sequentially. Here’s an example execution: 
+#### Console Output
+```
+MODEL:  openai:gpt-4o-mini
+EMBEDDER:  openai:text-embedding-3-small
+
+================================ Human Message =================================
+
+    I have made the following investments and received returns on different dates:  
+    - Invested ₹10,000 on January 1, 2020  
+    - Received ₹2,000 on January 1, 2021  
+    - Received ₹4,000 on January 1, 2022  
+    - Received ₹6,000 on January 1, 2023  
+    - Received ₹8,000 on January 1, 2024  
+    
+================================== Ai Message ==================================
+Tool Calls:
+  retrieve_tools (call_HT1hU3cD5u3EAXUJdOR6n8k1)
+  retrieve_tools (call_x8YHtU1fWJgAyyH6uQNSkbvH)
+  retrieve_tools (call_qDiZM9EdSOCitq2AxkGvaNks)
+================================= Tool Message =================================
+
+Available tools: ['parse_date', 'calculate_xnpv']
+================================== Ai Message ==================================
+Tool Calls:
+  calculate_xnpv (call_glDaHAQrzcmtAp0d7ozCytma)
+  calculate_xirr (call_8nQO7tCVIKle6Dpx1MUK9SGM)
+================================= Tool Message =================================
+Name: calculate_xirr
+
+0.2724259617293147
+================================== Ai Message ==================================
+
+{
+  "XNPV": 5092.021990070293,
+  "XIRR": "27.24%"
+}
+```
+
 ## Benefits of Using `langgraph-bigtool`
 - **Scalability**: Supports hundreds of tools, making it highly adaptable.
 - **Modular Architecture**: Allows easy addition of new tools without modifying existing logic.
