@@ -34,9 +34,9 @@ The calculation of XIRR depends on the XNPV (Extended Net Present Value) functio
 
 $$XNPV = \sum \frac{C_i}{(1 + r)^{(t_i - t_0)/365}}$$
 where:
-- \( C$_i$ \) is the cash flow at time \( t$_i$ \)
+- $( C_i )$ is the cash flow at time $( t_i )$
 - \( r \) is the discount rate
-- \( t$_0$ \) is the date of the first cash flow
+- $( t_0 )$ is the date of the first cash flow
 
 ### XIRR Calculation:
 XIRR is found using numerical methods such as Newton’s method to solve for \( r \) in the XNPV equation where \( XNPV = 0 \).
