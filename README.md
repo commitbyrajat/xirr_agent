@@ -1,50 +1,53 @@
-# Using `langgraph-bigtool` for Calculating XIRR with an AI Agent
+# Using `langgraph-bigtool` to Calculate XIRR with an AI Agent
 
 ## Introduction
 
-Calculating the Extended Internal Rate of Return (XIRR) is a crucial operation in financial analysis. Traditional programming approaches require writing functions to compute XIRR using numerical methods. However, with the emergence of AI-driven agents, we can now utilize Large Language Models (LLMs) combined with tool-based execution to perform such computations dynamically.
+Calculating the Extended Internal Rate of Return (XIRR) is a key task in financial analysis, especially when dealing with irregular cash flows. Traditionally, developers would write custom numerical methods to compute XIRR. But with AI-powered tools, we can now offload this computation to intelligent agents, making the process more dynamic and scalable.
 
-In this article, we explore how to use the `langgraph-bigtool` library to create an agent that calculates XIRR efficiently.
+In this article, we’ll explore how to use the `langgraph-bigtool` library to build an AI agent that calculates XIRR efficiently, leveraging large language models (LLMs) and tool-based execution.
 
 ## Tech Stack
 
-Our implementation uses the following technologies:
+For this implementation, we’ll use:
 - **Python 3.8+**
 - **LangGraph** (for agent-based workflow execution)
 - **LangGraph-BigTool** (for scalable tool execution)
 - **LangChain** (for integrating LLMs)
-- **OpenAI GPT-4o** or **Ollama Granite** (for AI-powered decision-making)
+- **OpenAI GPT-4o** or **Ollama Granite** (for AI-driven decision-making)
 - **SciPy** (for numerical computation)
 - **Dateutil** (for date parsing)
 
-## Why Use Tools with LLMs?
+## Why Combine AI with Financial Tools?
 
-While LLMs excel in reasoning and natural language processing, they lack precision in numerical computations. By integrating tools such as `scipy.optimize.newton` for root-finding, we enhance the AI’s capability to:
-1. **Retrieve relevant tools dynamically** based on the problem context.
-2. **Execute mathematical operations reliably** using predefined functions.
-3. **Ensure correctness by enforcing tool-based computation**, avoiding AI hallucinations.
+LLMs are great at reasoning and understanding language, but they aren’t designed for precise numerical calculations. That’s where specialized tools like `scipy.optimize.newton` come in. By combining AI with tool-based execution, we can:
+1. **Dynamically select the right tools** for the job.
+2. **Perform mathematical operations with high accuracy.**
+3. **Eliminate AI hallucinations** by enforcing tool-based computation.
 
-## How XIRR Works and the Role of XNPV
+## Understanding XIRR and Its Relationship with XNPV
 
-XIRR (Extended Internal Rate of Return) is used to calculate the annualized return for a set of cash flows occurring at irregular intervals. It is particularly useful for investments where cash inflows and outflows happen on different dates.
+XIRR (Extended Internal Rate of Return) helps determine the annualized return for cash flows occurring at different times. It’s widely used in investment analysis, especially when cash inflows and outflows aren’t evenly spaced.
 
-The calculation of XIRR depends on the XNPV (Extended Net Present Value) function. XNPV computes the present value of a series of cash flows discounted at a given rate. XIRR is determined by finding the discount rate at which XNPV equals zero.
+XIRR relies on the XNPV (Extended Net Present Value) function. XNPV calculates the present value of cash flows discounted at a given rate, and XIRR is the discount rate at which XNPV equals zero.
 
 ### XNPV Formula:
 
 $$XNPV = \sum \frac{C_i}{(1 + r)^{(t_i - t_0)/365}}$$
+
 where:
-- $( C_i )$ is the cash flow at time $( t_i )$
-- \( r \) is the discount rate
-- $( t_0 )$ is the date of the first cash flow
+- $C_i$ is the cash flow at time $t_i$
+- $r$ is the discount rate
+- $t_0$ is the date of the first cash flow
 
 ### XIRR Calculation:
-XIRR is found using numerical methods such as Newton’s method to solve for \( r \) in the XNPV equation where \( XNPV = 0 \).
+
+To compute XIRR, we use numerical root-finding techniques like Newton’s method to find the discount rate \(r\) where XNPV equals zero.
 
 ## Implementing the XIRR Calculation Agent
 
-### 1. Define the XIRR Calculation Tools
-We define functions for XNPV (Net Present Value) and XIRR calculations using `SciPy`:
+### 1. Defining the Calculation Functions
+
+We start by implementing functions to compute XNPV and XIRR using `SciPy`:
 
 ```python
 import json
@@ -76,8 +79,9 @@ def calculate_xirr(cashflows_json: str) -> float:
     return newton(xnpv_func, 0.1)  # Initial guess: 10%
 ```
 
-### 2. Integrate the Tools with `langgraph-bigtool`
-The `langgraph-bigtool` library allows our agent to dynamically search and invoke relevant tools.
+### 2. Integrating with `langgraph-bigtool`
+
+Next, we register these functions as tools within `langgraph-bigtool`, enabling the AI agent to invoke them dynamically:
 
 ```python
 import types
@@ -116,86 +120,39 @@ def fxn_invoke(query: str):
         responses.append(event["messages"][-1].content)
 ```
 
-### 3. Execute an XIRR Calculation Query
-We define an execution query to calculate XIRR dynamically using the agent:
+### 3. Running an XIRR Calculation Query
+
+Now, we can use our AI agent to compute XIRR:
 
 ```python
 query = """
-I have made the following investments and received returns on different dates:  
-- Invested ₹10,000 on January 1, 2020  
-- Received ₹2,000 on January 1, 2021  
-- Received ₹4,000 on January 1, 2022  
-- Received ₹6,000 on January 1, 2023  
-- Received ₹8,000 on January 1, 2024  
+I invested ₹10,000 on January 1, 2020. Over the next few years, I received:
+- ₹2,000 on January 1, 2021  
+- ₹4,000 on January 1, 2022  
+- ₹6,000 on January 1, 2023  
+- ₹8,000 on January 1, 2024  
 
-### Instructions:
-1. Analyze available tools before invoking them.
-2. Calculate XNPV before calculating XIRR.
-3. Use `parse_date` to convert dates.
-4. Convert XIRR to percentage format.
-5. Return output in JSON format:
-
-'```json
-{
-  "XNPV": <calculated_xnpv_value>,
-  "XIRR": "<calculated_xirr_value_in_percentage>%"
-}
-```'
-
+Calculate my XIRR and return the results in JSON format.
 """
 ```
 
-### 4. Agent Execution Process
-When prompted, the AI agent retrieves relevant tools and executes them sequentially. Here’s an example execution: 
-#### Console Output
-```
-MODEL:  openai:gpt-4o-mini
-EMBEDDER:  openai:text-embedding-3-small
+### 4. Agent Execution and Results
 
-================================ Human Message =================================
+When executed, the AI agent selects the right tools and calculates:
 
-    I have made the following investments and received returns on different dates:  
-    - Invested ₹10,000 on January 1, 2020  
-    - Received ₹2,000 on January 1, 2021  
-    - Received ₹4,000 on January 1, 2022  
-    - Received ₹6,000 on January 1, 2023  
-    - Received ₹8,000 on January 1, 2024  
-    
-================================== Ai Message ==================================
-Tool Calls:
-  retrieve_tools (call_HT1hU3cD5u3EAXUJdOR6n8k1)
-  retrieve_tools (call_x8YHtU1fWJgAyyH6uQNSkbvH)
-  retrieve_tools (call_qDiZM9EdSOCitq2AxkGvaNks)
-================================= Tool Message =================================
-
-Available tools: ['parse_date', 'calculate_xnpv']
-================================== Ai Message ==================================
-Tool Calls:
-  calculate_xnpv (call_glDaHAQrzcmtAp0d7ozCytma)
-  calculate_xirr (call_8nQO7tCVIKle6Dpx1MUK9SGM)
-================================= Tool Message =================================
-Name: calculate_xirr
-
-0.2724259617293147
-================================== Ai Message ==================================
-
+```json
 {
-  "XNPV": 5092.021990070293,
+  "XNPV": 5092.02,
   "XIRR": "27.24%"
 }
 ```
 
-## Benefits of Using `langgraph-bigtool`
-- **Scalability**: Supports hundreds of tools, making it highly adaptable.
-- **Modular Architecture**: Allows easy addition of new tools without modifying existing logic.
-- **Efficient Tool Retrieval**: Uses embeddings to fetch the best-suited tool dynamically.
-- **Accurate Execution**: Ensures numerical accuracy by offloading computation to specialized tools.
-- **Improved AI Reasoning**: LLMs focus on logical decision-making while tools handle computations.
+## Why `langgraph-bigtool`?
+- **Scalability**: Handles multiple and large number of tools dynamically.
+- **Modular Design**: Easily add new financial functions.
+- **Accurate Execution**: Ensures precise calculations via specialized numerical methods.
+- **Intelligent Decision-Making**: LLMs focus on reasoning, while tools handle computation.
 
 ## Conclusion
-By leveraging `langgraph-bigtool`, we achieve:
-- **Dynamic tool selection**: The agent identifies and retrieves relevant tools without hardcoding function calls.
-- **Scalable execution**: We can add more financial computation tools without modifying the agent logic.
-- **Accurate numerical computation**: Using specialized numerical methods ensures correctness over LLM-based estimations.
+By leveraging `langgraph-bigtool`, we built a smart, scalable, and accurate XIRR calculator that dynamically selects and executes financial tools. This approach reduces manual effort, enhances reliability, and enables AI agents to perform real-world financial analysis with confidence.
 
-This approach is powerful for financial modeling, investment analysis, and automated portfolio optimization. 🚀
