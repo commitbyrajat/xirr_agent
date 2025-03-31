@@ -31,11 +31,12 @@ XIRR (Extended Internal Rate of Return) is used to calculate the annualized retu
 The calculation of XIRR depends on the XNPV (Extended Net Present Value) function. XNPV computes the present value of a series of cash flows discounted at a given rate. XIRR is determined by finding the discount rate at which XNPV equals zero.
 
 ### XNPV Formula:
-\[ XNPV = \sum \frac{C_i}{(1 + r)^{(t_i - t_0)/365}} \]
+
+$$XNPV = \sum \frac{C_i}{(1 + r)^{(t_i - t_0)/365}}$$
 where:
-- \( C_i \) is the cash flow at time \( t_i \)
+- \( C$_i$ \) is the cash flow at time \( t$_i$ \)
 - \( r \) is the discount rate
-- \( t_0 \) is the date of the first cash flow
+- \( t$_0$ \) is the date of the first cash flow
 
 ### XIRR Calculation:
 XIRR is found using numerical methods such as Newton’s method to solve for \( r \) in the XNPV equation where \( XNPV = 0 \).
@@ -158,4 +159,3 @@ By leveraging `langgraph-bigtool`, we achieve:
 - **Accurate numerical computation**: Using specialized numerical methods ensures correctness over LLM-based estimations.
 
 This approach is powerful for financial modeling, investment analysis, and automated portfolio optimization. 🚀
-
