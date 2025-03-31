@@ -1,0 +1,35 @@
+[project]
+name = "example-big-tool"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "rajatnigam", email = "rajatnigam89@gmail.com" }
+]
+dependencies = [
+    "langgraph>=0.3.21",
+    "langchain-openai>=0.3.11",
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "langchain-community>=0.3.20",
+    "langgraph-bigtool>=0.0.2",
+    "grandalf>=0.8",
+    "scipy>=1.15.2",
+    "langchain-ollama>=0.3.0",
+    "python-dateutil>=2.9.0.post0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/example_big_tool"]
